@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美食连连看 - 10关挑战</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 开始界面 -->
+    <div id="startScreen" class="screen active">
+        <div class="game-header">
+            <h1 class="game-title">🍔 美食连连看 🍕</h1>
+            <p class="game-subtitle">连接三个相同的美食，挑战10关！</p>
+        </div>
+        
+        <div class="player-input">
+            <label for="playerName">玩家昵称：</label>
+            <input type="text" id="playerName" placeholder="请输入昵称" maxlength="10">
+        </div>
+
+        <div class="level-selection">
+            <h3>选择关卡</h3>
+            <div class="level-grid" id="levelGrid">
+                <!-- 关卡按钮将通过JS生成 -->
+            </div>
+        </div>
+
+        <div class="start-buttons">
+            <button id="startGameBtn" class="btn-primary">🎮 开始游戏</button>
+            <button id="showLeaderboardBtn" class="btn-secondary">🏆 排行榜</button>
+        </div>
+
+        <div class="game-rules">
+            <h4>游戏规则</h4>
+            <ul>
+                <li>点击三个相同的美食图案进行消除</li>
+                <li>图案之间可以通过直线连接（不超过2次转弯）</li>
+                <li>在规定时间内消除所有图案即可过关</li>
+                <li>用时越短，得分越高！</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 游戏界面 -->
+    <div id="gameScreen" class="screen">
+        <div class="game-info-bar">
+            <div class="info-item">
+                <span class="info-label">关卡</span>
+                <span class="info-value" id="currentLevel">1</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">时间</span>
+                <span class="info-value" id="timer">00:00</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">得分</span>
+                <span class="info-value" id="score">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">玩家</span>
+                <span class="info-value" id="playerNameDisplay">玩家</span>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <button id="pauseBtn" class="btn-small">⏸ 暂停</button>
+            <button id="hintBtn" class="btn-small">💡 提示</button>
+            <button id="shuffleBtn" class="btn-small">🔄 重排</button>
+            <button id="backToMenuBtn" class="btn-small">🏠 返回</button>
+        </div>
+
+        <div class="game-board-container">
+            <div id="gameBoard" class="game-board">
+                <!-- 游戏网格将通过JS生成 -->
+            </div>
+        </div>
+
+        <div class="selected-indicator">
+            <span>已选择：</span>
+            <div id="selectedTiles" class="selected-tiles">
+                <!-- 已选择的方块 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 暂停界面 -->
+    <div id="pauseOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>⏸ 游戏暂停</h2>
+            <div class="overlay-buttons">
+                <button id="resumeBtn" class="btn-primary">▶ 继续游戏</button>
+                <button id="restartBtn" class="btn-secondary">🔄 重新开始</button>
+                <button id="quitBtn" class="btn-danger">🏠 返回菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 关卡完成弹窗 -->
+    <div id="levelCompleteOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>🎉 关卡完成！</h2>
+            <div class="level-stats">
+                <p>关卡：<span id="completedLevel">1</span></p>
+                <p>用时：<span id="completedTime">00:00</span></p>
+                <p>本关得分：<span id="levelScore">0</span></p>
+                <p>总得分：<span id="totalScoreDisplay">0</span></p>
+            </div>
+            <div class="overlay-buttons">
+                <button id="nextLevelBtn" class="btn-primary">➡ 下一关</button>
+                <button id="replayLevelBtn" class="btn-secondary">🔄 重玩本关</button>
+                <button id="viewLeaderboardBtn" class="btn-secondary">🏆 排行榜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗（失败） -->
+    <div id="gameOverOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>😢 时间到！</h2>
+            <p>很遗憾，时间用完了</p>
+            <div class="level-stats">
+                <p>关卡：<span id="failedLevel">1</span></p>
+                <p>总得分：<span id="finalScore">0</span></p>
+            </div>
+            <div class="overlay-buttons">
+                <button id="retryBtn" class="btn-primary">🔄 重新挑战</button>
+                <button id="backToStartBtn" class="btn-secondary">🏠 返回菜单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 排行榜弹窗 -->
+    <div id="leaderboardOverlay" class="overlay">
+        <div class="overlay-content leaderboard-content">
+            <h2>🏆 排行榜</h2>
+            <div class="leaderboard-tabs">
+                <button class="leaderboard-tab active" data-type="score">按总分</button>
+                <button class="leaderboard-tab" data-type="level">按关卡</button>
+            </div>
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- 排行榜内容 -->
+            </div>
+            <button id="closeLeaderboardBtn" class="btn-secondary">关闭</button>
+        </div>
+    </div>
+
+    <!-- 游戏通关弹窗 -->
+    <div id="victoryOverlay" class="overlay">
+        <div class="overlay-content">
+            <h2>🏆 恭喜通关！</h2>
+            <p>你已完成所有10个关卡！</p>
+            <div class="level-stats">
+                <p>最终得分：<span id="victoryScore">0</span></p>
+                <p>总用时：<span id="victoryTime">00:00</span></p>
+            </div>
+            <div class="overlay-buttons">
+                <button id="playAgainBtn" class="btn-primary">🎮 再玩一次</button>
+                <button id="viewFinalLeaderboardBtn" class="btn-secondary">🏆 排行榜</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
